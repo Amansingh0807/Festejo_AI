@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Get Shit Done (GSD) and Agent Workflow Artifacts
+/.agent
+/.agents
+/.gsd
+/.gemini
+/adapters
+GSD-STYLE.md
+PROJECT_RULES.md
+VERSION
+model_capabilities.yaml

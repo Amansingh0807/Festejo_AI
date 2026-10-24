@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String      @id @default(cuid())
+  clerkId   String      @unique
+  email     String      @unique
+  name      String?
+  plans     EventPlan[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model EventPlan {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String        @default("Untitled Event Plan")
+  eventType   String        @default("Wedding")
+  city        String        @default("Delhi NCR")
+  eventDate   String?
+  guestCount  Int           @default(300)
+  totalBudget Float         @default(2500000)
+  planState   Json?
+  messages    ChatMessage[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ChatMessage {
+  id          String    @id @default(cuid())
+  eventPlanId String
+  eventPlan   EventPlan @relation(fields: [eventPlanId], references: [id], onDelete: Cascade)
+  role        String
+  content     String
+  stage       Int       @default(1)
+  dataPayload Json?
+  createdAt   DateTime  @default(now())
+}
