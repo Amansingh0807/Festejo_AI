@@ -4,13 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, Zap } from "lucide-react";
 
-export function Footer() {
+export function Footer(): React.ReactElement {
   return (
     <div className="w-full">
       {/* Final CTA Section on #ffe17c */}
       <section className="w-full bg-[#ffe17c] border-b-2 border-black py-20 px-4 sm:px-8 text-center neo-dots-yellow">
         <div className="max-w-4xl mx-auto space-y-6">
-          <span className="font-mono text-xs uppercase font-bold tracking-widest text-black bg-white px-3.5 py-1 rounded-full border-2 border-black hard-shadow-2">
+          <span className="font-mono text-xs uppercase font-bold tracking-widest text-black bg-white px-3.5 py-1 rounded-full border-2 border-black hard-shadow-2 inline-block">
             TAKE IMMEDIATE COMMAND
           </span>
 
@@ -25,23 +25,23 @@ export function Footer() {
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/workspace"
-              className="bg-black text-white font-heading font-extrabold text-lg px-8 py-4 rounded-xl border-2 border-black hard-shadow-8 neo-push-btn-lg inline-flex items-center gap-2"
+              className="bg-black text-white font-heading font-extrabold text-lg px-8 py-4 rounded-xl border-2 border-black hard-shadow-8 neo-push-btn-lg inline-flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-black outline-none"
             >
               <span>Launch Festejo Decision Engine</span>
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Footer in #171e19 with 4 Columns */}
-      <footer className="w-full bg-[#171e19] text-white py-16 px-4 sm:px-8 border-t-2 border-black">
+      <footer aria-label="Site Footer" className="w-full bg-[#171e19] text-white py-16 px-4 sm:px-8 border-t-2 border-black">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1: Brand & Social */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 bg-black border-2 border-[#b7c6c2] flex items-center justify-center">
-                <Zap className="h-6 w-6 text-[#ffe17c] fill-[#ffe17c]" />
+                <Zap className="h-6 w-6 text-[#ffe17c] fill-[#ffe17c]" aria-hidden="true" />
               </div>
               <span className="font-heading text-2xl font-extrabold text-[#ffe17c]">
                 Festejo AI
@@ -52,15 +52,22 @@ export function Footer() {
               The Indian Event Decision Engine. Combining deterministic TypeScript math with state-aware cultural intelligence.
             </p>
 
-            {/* Social Icons (10x10 squares #272727 with light gray borders turning Yellow/Black on hover) */}
+            {/* Social Icons with accessible buttons */}
             <div className="flex items-center gap-2 pt-2">
-              {["X", "IN", "GH", "YT"].map((soc, i) => (
-                <div
+              {[
+                { name: "Twitter/X", label: "Visit Twitter profile" },
+                { name: "LinkedIn", label: "Visit LinkedIn profile" },
+                { name: "GitHub", label: "Visit GitHub repository" },
+                { name: "YouTube", label: "Watch YouTube demo" },
+              ].map((soc, i) => (
+                <button
                   key={i}
-                  className="h-10 w-10 bg-[#272727] border-2 border-[#737373] text-[#b7c6c2] flex items-center justify-center font-mono text-xs font-bold hover:bg-[#ffe17c] hover:text-black hover:border-black transition-all cursor-pointer"
+                  type="button"
+                  aria-label={soc.label}
+                  className="h-10 w-10 bg-[#272727] border-2 border-[#737373] text-[#b7c6c2] flex items-center justify-center font-mono text-xs font-bold hover:bg-[#ffe17c] hover:text-black hover:border-black transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-white outline-none"
                 >
-                  {soc}
-                </div>
+                  {soc.name.substring(0, 2).toUpperCase()}
+                </button>
               ))}
             </div>
           </div>
@@ -71,11 +78,11 @@ export function Footer() {
               ENGINES
             </span>
             <ul className="space-y-2 text-[#b7c6c2]">
-              <li><a href="#features" className="hover:text-white transition-colors">Budget Stress-Tester</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">10% Buffer Reserve Escrow</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Ripple Effect Protocol</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Quote Deconstructor</a></li>
-              <li><a href="#features" className="hover:text-white transition-colors">Reverse Timeline Generator</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors focus-visible:ring-1 focus-visible:ring-white outline-none">Budget Stress-Tester</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors focus-visible:ring-1 focus-visible:ring-white outline-none">10% Buffer Reserve Escrow</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors focus-visible:ring-1 focus-visible:ring-white outline-none">Ripple Effect Protocol</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors focus-visible:ring-1 focus-visible:ring-white outline-none">Quote Deconstructor</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors focus-visible:ring-1 focus-visible:ring-white outline-none">Reverse Timeline Generator</a></li>
             </ul>
           </div>
 

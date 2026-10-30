@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Check } from "lucide-react";
 import { CityTier, EventType } from "@/lib/types/event";
 import { useEventStore } from "@/lib/store/useEventStore";
@@ -10,7 +10,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function IntakeModal({ isOpen, onClose }: Props) {
+export function IntakeModal({ isOpen, onClose }: Props): React.ReactElement | null {
   const { initEventPlan, metadata } = useEventStore();
 
   const [eventType, setEventType] = useState<EventType>(metadata.eventType);
@@ -19,6 +19,21 @@ export function IntakeModal({ isOpen, onClose }: Props) {
   const [guestCount, setGuestCount] = useState(metadata.guestCount);
   const [totalBudget, setTotalBudget] = useState(metadata.totalBudget);
   const [eventDate, setEventDate] = useState(metadata.eventDate);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -40,9 +55,9 @@ export function IntakeModal({ isOpen, onClose }: Props) {
           type="button"
           onClick={onClose}
           aria-label="Close intake dialog"
-          className="absolute right-4 top-4 p-1.5 bg-black text-[#ffe17c] rounded-lg border-2 border-black hard-shadow-2 neo-push-btn cursor-pointer focus-visible:ring-2 focus-visible:ring-black"
+          className="absolute right-4 top-4 p-1.5 bg-black text-[#ffe17c] rounded-lg border-2 border-black hard-shadow-2 neo-push-btn cursor-pointer focus-visible:ring-2 focus-visible:ring-black outline-none"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5" aria-hidden="true" />
         </button>
 
         {/* Modal Header */}
@@ -184,15 +199,15 @@ export function IntakeModal({ isOpen, onClose }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border-2 border-black rounded-lg bg-white text-black font-heading font-extrabold uppercase hover:bg-gray-100 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-black"
+              className="px-4 py-2 border-2 border-black rounded-lg bg-white text-black font-heading font-extrabold uppercase hover:bg-gray-100 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-black outline-none"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-black text-[#ffe17c] font-heading font-extrabold uppercase rounded-lg border-2 border-black hard-shadow-2 neo-push-btn cursor-pointer flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-black"
+              className="px-5 py-2 bg-black text-[#ffe17c] font-heading font-extrabold uppercase rounded-lg border-2 border-black hard-shadow-2 neo-push-btn cursor-pointer flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-black outline-none"
             >
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4" aria-hidden="true" />
               <span>Execute Stress-Test</span>
             </button>
           </div>

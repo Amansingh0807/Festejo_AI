@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export function SocialProofMarquee() {
+export function SocialProofMarquee(): React.ReactElement {
   const brands = [
     "ACME HOSPITALITY GUILD",
     "GLOBEX BANQUET COUNCILS",
@@ -17,15 +17,19 @@ export function SocialProofMarquee() {
   ];
 
   return (
-    <div className="w-full bg-[#171e19] border-b-2 border-black py-4 overflow-hidden select-none">
+    <section
+      role="region"
+      aria-label="Partner hospitality and banquet organizations"
+      className="w-full bg-[#171e19] border-b-2 border-black py-4 overflow-hidden select-none"
+    >
       <div className="animate-marquee flex items-center gap-12 font-heading text-xl sm:text-2xl font-extrabold uppercase tracking-wider text-[#b7c6c2] opacity-60">
         {brands.concat(brands).map((brand, idx) => (
           <div key={idx} className="flex items-center gap-8 shrink-0">
             <span>{brand}</span>
-            <span className="h-2 w-2 rounded-full bg-[#ffe17c]" />
+            <span className="h-2 w-2 rounded-full bg-[#ffe17c]" aria-hidden="true" />
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

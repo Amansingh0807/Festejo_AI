@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useEventStore } from "@/lib/store/useEventStore";
 
-export function VibeIdeasTab() {
+export function VibeIdeasTab(): React.ReactElement {
   const vibeIdeas = useEventStore((s) => s.vibeIdeas);
   const [selectedModes, setSelectedModes] = useState<Record<string, "saver" | "splurge">>({
     "vibe-1": "saver",
@@ -59,79 +59,79 @@ export function VibeIdeasTab() {
                   <span className="text-gray-600">[SPEC {vibe.id.toUpperCase()}]</span>
                 </div>
 
-                {/* Title */}
-                <h4 className="font-heading text-xl font-extrabold text-black leading-snug">
+                <h4 className="font-heading text-xl font-extrabold text-black mb-2 leading-snug">
                   {vibe.title}
                 </h4>
 
-                {/* Core Concept */}
-                <p className="mt-2.5 font-body text-xs text-gray-800 font-medium leading-relaxed">
+                <p className="font-body text-xs text-[#171e19] mb-4 leading-relaxed font-medium">
                   {vibe.coreConcept}
                 </p>
 
-                {/* Neo-Brutalist Toggle */}
-                <div className="mt-4 grid grid-cols-2 gap-1.5 p-1 bg-[#171e19] rounded-xl border-2 border-black font-heading text-xs font-extrabold uppercase">
+                {/* Mode Selector Toggle */}
+                <div
+                  role="group"
+                  aria-label={`Toggle execution mode for ${vibe.title}`}
+                  className="grid grid-cols-2 gap-2 p-1 bg-[#171e19] border-2 border-black rounded-xl mb-4 font-mono text-xs"
+                >
                   <button
+                    type="button"
+                    aria-pressed={isSaver}
                     onClick={() => toggleMode(vibe.id, "saver")}
-                    className={`py-2 rounded-lg transition-all cursor-pointer ${
+                    className={`py-1.5 font-bold uppercase rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-white outline-none ${
                       isSaver
-                        ? "bg-[#ffe17c] text-black hard-shadow-2 translate-x-[-1px] translate-y-[-1px]"
+                        ? "bg-[#ffe17c] text-black font-extrabold hard-shadow-2"
                         : "text-[#b7c6c2] hover:text-white"
                     }`}
                   >
                     Smart Saver
                   </button>
-
                   <button
+                    type="button"
+                    aria-pressed={!isSaver}
                     onClick={() => toggleMode(vibe.id, "splurge")}
-                    className={`py-2 rounded-lg transition-all cursor-pointer ${
+                    className={`py-1.5 font-bold uppercase rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-white outline-none ${
                       !isSaver
-                        ? "bg-[#ffe17c] text-black hard-shadow-2 translate-x-[-1px] translate-y-[-1px]"
+                        ? "bg-[#ffe17c] text-black font-extrabold hard-shadow-2"
                         : "text-[#b7c6c2] hover:text-white"
                     }`}
                   >
-                    Splurge Mode
+                    Splurge Luxury
                   </button>
                 </div>
 
-                {/* Mode Details Box */}
-                <div className="mt-4 p-3.5 border-2 border-black rounded-xl bg-[#f4f4f5] space-y-2">
-                  <div className="flex justify-between items-center font-mono text-xs border-b border-gray-300 pb-1.5">
-                    <span className="font-bold uppercase text-black">
-                      {isSaver ? "Smart Saver Route" : "Splurge Signature"}
-                    </span>
-                    <span className="font-extrabold text-black bg-[#ffe17c] px-2 py-0.5 rounded border border-black">
-                      ~INR {(isSaver ? vibe.smartSaverVersion.estimatedCost : vibe.splurgeVersion.estimatedCost).toLocaleString("en-IN")}
+                {/* Details Box */}
+                <div
+                  className={`p-4 rounded-xl border-2 border-black font-mono text-xs space-y-2.5 transition-colors ${
+                    isSaver ? "bg-[#ffe17c]/20" : "bg-[#171e19] text-white"
+                  }`}
+                >
+                  <div className="flex justify-between items-center border-b border-black/30 pb-1.5">
+                    <span className="uppercase font-bold text-[10px]">Estimated Production:</span>
+                    <span className="font-extrabold text-sm">
+                      INR {(isSaver ? vibe.smartSaverVersion.estimatedCost : vibe.splurgeVersion.estimatedCost).toLocaleString("en-IN")}
                     </span>
                   </div>
 
-                  <p className="font-body text-xs text-gray-700 leading-relaxed font-medium">
-                    {isSaver
-                      ? vibe.smartSaverVersion.description
-                      : vibe.splurgeVersion.description}
+                  <p className="font-body text-xs leading-relaxed">
+                    {isSaver ? vibe.smartSaverVersion.description : vibe.splurgeVersion.description}
                   </p>
 
-                  <div className="border-t border-gray-300 pt-2">
-                    <span className="font-mono text-[10px] font-bold uppercase text-gray-600 block mb-1">
-                      {isSaver ? "Itemized DIY Production Hacks:" : "Luxury Architectural Highlights:"}
+                  <div>
+                    <span className="font-bold text-[10px] uppercase block mb-1">
+                      {isSaver ? "DIY Sourcing Hacks:" : "Luxury Signature Elements:"}
                     </span>
-                    <ul className="space-y-1 font-body text-xs text-black font-medium">
-                      {(isSaver
-                        ? vibe.smartSaverVersion.diyHacks
-                        : vibe.splurgeVersion.luxuryHighlights
-                      ).map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5">
-                          <span className="font-mono font-bold text-black">*</span>
-                          <span>{item}</span>
-                        </li>
+                    <ul className="space-y-1 text-xs list-disc list-inside">
+                      {(isSaver ? vibe.smartSaverVersion.diyHacks : vibe.splurgeVersion.luxuryHighlights).map((item, i) => (
+                        <li key={i}>{item}</li>
                       ))}
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-5 pt-2.5 border-t-2 border-black font-mono text-[10px] uppercase font-bold text-gray-600 text-center">
-                Culturally Validated Pan-Indian Protocol
+              <div className="mt-4 pt-3 border-t-2 border-black flex items-center justify-between font-mono text-[10px] text-gray-700 font-bold">
+                <span>Production Mode Active</span>
+                <span className="uppercase text-black">Verified In Ledger</span>
               </div>
             </div>
           );

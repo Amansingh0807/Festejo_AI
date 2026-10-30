@@ -3,7 +3,7 @@
 import React from "react";
 import { Users, Building, Cake } from "lucide-react";
 
-export function UseCases() {
+export function UseCases(): React.ReactElement {
   const personas = [
     {
       badge: "COUPLES & FAMILIES",
@@ -11,7 +11,7 @@ export function UseCases() {
       desc: "Balancing Haldi, Mehendi, Sangeet, and Reception. Protects your family from outside decorator penalty royalties, unmetered generator diesel, and caterer plate inflation.",
       bg: "bg-[#b7c6c2] text-black",
       shadow: "hard-shadow-4",
-      icon: <Users className="h-6 w-6 text-black" />,
+      icon: <Users className="h-6 w-6 text-black" aria-hidden="true" />,
       highlight: "80% Minimum Guarantee + 10% Floating Buffer",
     },
     {
@@ -20,7 +20,7 @@ export function UseCases() {
       desc: "Managing high-footfall Diwali or cultural society gatherings. Enforces Supreme Court 10 PM sound permits, electrical fire clearance, and crowd control vendor SLAs.",
       bg: "bg-[#ffe17c] text-black",
       shadow: "hard-shadow-8",
-      icon: <Building className="h-6 w-6 text-black" />,
+      icon: <Building className="h-6 w-6 text-black" aria-hidden="true" />,
       highlight: "Society NOC Compliance & Overtime Lock",
     },
     {
@@ -29,16 +29,16 @@ export function UseCases() {
       desc: "High-energy 4-hour banquets or corporate milestones. Optimizes kid-to-adult plate pricing ratios, live chaat stalls, and emcee entertainment contracts.",
       bg: "bg-[#272727] text-white",
       shadow: "hard-shadow-4",
-      icon: <Cake className="h-6 w-6 text-[#ffe17c]" />,
+      icon: <Cake className="h-6 w-6 text-[#ffe17c]" aria-hidden="true" />,
       highlight: "Live Stalls vs Heavy Dinner Format Shift",
     },
   ];
 
   return (
-    <section className="w-full bg-white border-b-2 border-black py-16 px-4 sm:px-8">
+    <section aria-label="Use Case Personas" className="w-full bg-white border-b-2 border-black py-16 px-4 sm:px-8">
       <div className="max-w-6xl mx-auto space-y-10">
         <div className="text-center space-y-2">
-          <span className="font-mono text-xs uppercase font-bold tracking-widest text-[#171e19] bg-[#b7c6c2] px-3.5 py-1 rounded-full border-2 border-black hard-shadow-2">
+          <span className="font-mono text-xs uppercase font-bold tracking-widest text-[#171e19] bg-[#b7c6c2] px-3.5 py-1 rounded-full border-2 border-black hard-shadow-2 inline-block">
             TAILORED ENGINES
           </span>
           <h2 className="font-heading text-3xl sm:text-5xl font-extrabold text-black tracking-tight">

@@ -1,5 +1,12 @@
 import { VendorItem } from "../types/event";
 
+/**
+ * Returns curated negotiation intelligence and contractual safeguards for Indian vendors.
+ * Enforces a strict 25% maximum advance payment ceiling and uncovers hidden fees.
+ *
+ * @param eventType - Event classification (Wedding, Corporate, etc.)
+ * @returns Array of VendorItem objects with benchmarks and must-ask questions
+ */
 export function getIndianVendorIntelligence(eventType: string = "Wedding"): VendorItem[] {
   const venueBenchmark = eventType === "Corporate"
     ? "Rs. 2,00,000 - Rs. 6,00,000 per corporate banquet slot"
