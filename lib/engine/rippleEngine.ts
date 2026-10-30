@@ -8,11 +8,19 @@ export interface RippleTriggerInput {
   weatherDetails?: string;
 }
 
+/**
+ * Simulates downstream ripple effects and contingency drawdowns triggered by event shocks.
+ * Models guest count variances, price escalations, and weather contingencies.
+ *
+ * @param currentMetadata - Current event state metadata
+ * @param input - Trigger parameters describing the shock
+ * @returns Comprehensive RippleAnalysis with recovery options
+ */
 export function calculateRippleEffect(
   currentMetadata: EventMetadata,
   input: RippleTriggerInput
 ): RippleAnalysis {
-  const oldReserve = currentMetadata.contingencyReserve;
+  const oldReserve = currentMetadata?.contingencyReserve ?? 0;
   let costDelta = 0;
   let triggerDescription = "";
   const affectedCategories: string[] = [];

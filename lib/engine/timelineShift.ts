@@ -1,5 +1,13 @@
 import { TimelineTask } from "../types/event";
 
+/**
+ * Generates an operational reverse timeline calculated backward from event day.
+ * Enforces legal cutoffs (10 PM outdoor sound curfew) and catering 80-10 buffers.
+ *
+ * @param eventDateStr - Target event date in ISO format (YYYY-MM-DD)
+ * @param eventType - Event category (Wedding, Birthday, Corporate, etc.)
+ * @returns Array of interlinked TimelineTask items with T-minus offsets
+ */
 export function generateDependencyTimeline(
   eventDateStr: string,
   eventType: string = "Wedding"

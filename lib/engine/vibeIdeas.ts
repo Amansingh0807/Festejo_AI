@@ -1,5 +1,12 @@
 import { VibeIdea } from "../types/event";
 
+/**
+ * Generates dual-tier aesthetic concepts (Smart Saver DIY vs Splurge Luxury).
+ * Tailors decor, lighting, and cultural motifs to Indian traditions.
+ *
+ * @param eventType - Event category (Wedding, Birthday, etc.)
+ * @returns Array of VibeIdea objects with actionable DIY hacks and luxury highlights
+ */
 export function getPersonalizedVibeIdeas(eventType: string = "Wedding"): VibeIdea[] {
   if (eventType === "Wedding") {
     return [
