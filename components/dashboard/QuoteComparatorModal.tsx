@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Check, Copy } from "lucide-react";
 import { useEventStore } from "@/lib/store/useEventStore";
 
-export function QuoteComparatorModal() {
+export function QuoteComparatorModal(): React.JSX.Element | null {
   const {
     isQuoteModalOpen,
     setQuoteModalOpen,
@@ -14,6 +14,16 @@ export function QuoteComparatorModal() {
 
   const [category, setCategory] = useState("Catering");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setQuoteModalOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setQuoteModalOpen]);
 
   if (!isQuoteModalOpen) return null;
 
@@ -57,10 +67,13 @@ export function QuoteComparatorModal() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap gap-1.5 border-b-2 border-black pb-3 font-mono text-xs">
+        <div role="tablist" aria-label="Vendor category quote comparisons" className="flex flex-wrap gap-1.5 border-b-2 border-black pb-3 font-mono text-xs">
           {["Catering", "Decor & Lighting", "Venue & Hall", "DJ & Sound"].map((cat) => (
             <button
               key={cat}
+              type="button"
+              role="tab"
+              aria-selected={category === cat}
               onClick={() => {
                 setCategory(cat);
                 compareVendorQuotesAction(cat);
@@ -165,17 +178,18 @@ export function QuoteComparatorModal() {
             </span>
 
             <button
+              type="button"
               onClick={handleCopy}
               className="px-3 py-1 bg-black text-[#ffe17c] font-heading font-extrabold text-[10px] uppercase rounded border-2 border-black hard-shadow-2 neo-push-btn cursor-pointer flex items-center gap-1"
             >
               {copied ? (
                 <>
-                  <Check className="h-3.5 w-3.5" />
+                  <Check className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>COPIED TO CLIPBOARD</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-3.5 w-3.5" />
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>COPY SCRIPT</span>
                 </>
               )}
