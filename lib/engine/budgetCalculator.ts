@@ -22,16 +22,29 @@ const MIN_PER_HEAD_THRESHOLDS: Record<CityTier, Record<EventType, number>> = {
   },
 };
 
+/**
+ * Runs a deterministic feasibility stress test on proposed event financial parameters.
+ * Calculates per-plate economics, enforces mandatory 10% contingency escrow,
+ * detects deficits against city-tier benchmarks, and proposes actionable trade-offs.
+ *
+ * @param totalBudget - Total committed capital in Indian Rupees (INR)
+ * @param guestCount - Total expected headcount
+ * @param cityTier - City classification (Tier-1, Tier-2, or Tier-3)
+ * @param eventType - Event category (Wedding, Birthday, Community, Corporate)
+ * @returns Comprehensive StressTestResult object
+ */
 export function runBudgetStressTest(
   totalBudget: number,
   guestCount: number,
   cityTier: CityTier,
   eventType: EventType
 ): StressTestResult {
-  // 10% Mandatory Contingency Reserve
-  const contingencyReserve = Math.round(totalBudget * 0.1);
-  const usableBudget = totalBudget - contingencyReserve;
+  const normalizedBudget = Math.max(0, totalBudget);
   const safeGuestCount = Math.max(1, guestCount);
+
+  // 10% Mandatory Contingency Reserve
+  const contingencyReserve = Math.round(normalizedBudget * 0.1);
+  const usableBudget = normalizedBudget - contingencyReserve;
   const perHeadTotal = Math.round(usableBudget / safeGuestCount);
 
   const minRequiredPerHead = MIN_PER_HEAD_THRESHOLDS[cityTier]?.[eventType] ?? 1200;
@@ -75,7 +88,7 @@ export function runBudgetStressTest(
       ];
 
   return {
-    totalBudget,
+    totalBudget: normalizedBudget,
     contingencyReserve,
     usableBudget,
     perHeadTotal,

@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { runBudgetStressTest } from "@/lib/engine/budgetCalculator";
 import { calculateRippleEffect } from "@/lib/engine/rippleEngine";
 import { analyzeVendorQuotes } from "@/lib/engine/quoteAnalyzer";
+import { CityTier, EventType } from "@/lib/types/event";
 
 const SYSTEM_INSTRUCTION = `You are Festejo AI, the elite Indian Event Decision Engine.
 Your core role is an authoritative, state-aware decision co-pilot for Indian weddings, social galas, and celebrations.
@@ -55,15 +56,33 @@ interface FallbackState {
   };
 }
 
-export async function POST(req: Request) {
+const SECURITY_HEADERS = {
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Cache-Control": "no-store, no-cache, must-revalidate",
+};
+
+const VALID_TIERS: CityTier[] = ["Tier-1", "Tier-2", "Tier-3"];
+const VALID_TYPES: EventType[] = ["Wedding", "Birthday", "Community", "Corporate"];
+
+export async function POST(req: Request): Promise<NextResponse> {
   try {
+    const contentType = req.headers.get("content-type");
+    if (contentType && !contentType.includes("application/json")) {
+      return NextResponse.json(
+        { error: "Content-Type must be application/json" },
+        { status: 415, headers: SECURITY_HEADERS }
+      );
+    }
+
     let body: Record<string, unknown>;
     try {
       body = await req.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON payload" },
-        { status: 400 }
+        { status: 400, headers: SECURITY_HEADERS }
       );
     }
 
@@ -80,27 +99,60 @@ export async function POST(req: Request) {
         currentPlanState?.metadata as Parameters<typeof calculateRippleEffect>[0],
         payload as unknown as Parameters<typeof calculateRippleEffect>[1]
       );
-      return NextResponse.json({ success: true, ripple });
+      return NextResponse.json({ success: true, ripple }, { headers: SECURITY_HEADERS });
     }
 
     if (action === "analyzeQuote" && payload) {
-      const category = typeof payload.category === "string" ? payload.category : "Catering";
+      const category = typeof payload.category === "string" && payload.category.trim()
+        ? payload.category.trim()
+        : "Catering";
       const quoteAnalysis = analyzeVendorQuotes(
         category,
-        payload.quoteA as unknown as Parameters<typeof analyzeVendorQuotes>[1],
-        payload.quoteB as unknown as Parameters<typeof analyzeVendorQuotes>[2]
+        typeof payload.quoteA === "string" ? payload.quoteA : undefined,
+        typeof payload.quoteB === "string" ? payload.quoteB : undefined
       );
-      return NextResponse.json({ success: true, quoteAnalysis });
+      return NextResponse.json({ success: true, quoteAnalysis }, { headers: SECURITY_HEADERS });
     }
 
     if (action === "stressTest" && payload) {
-      const totalBudget = typeof payload.totalBudget === "number" ? payload.totalBudget : 2500000;
-      const guestCount = typeof payload.guestCount === "number" ? payload.guestCount : 300;
-      const cityTier = (typeof payload.cityTier === "string" ? payload.cityTier : "Tier-1") as Parameters<typeof runBudgetStressTest>[2];
-      const eventType = (typeof payload.eventType === "string" ? payload.eventType : "Wedding") as Parameters<typeof runBudgetStressTest>[3];
+      const rawBudget = Number(payload.totalBudget);
+      if (!Number.isFinite(rawBudget) || rawBudget <= 0) {
+        return NextResponse.json(
+          { success: false, error: "totalBudget must be a positive finite number" },
+          { status: 400, headers: SECURITY_HEADERS }
+        );
+      }
+      const totalBudget = rawBudget;
+
+      const rawGuests = Number(payload.guestCount);
+      if (!Number.isInteger(rawGuests) || rawGuests <= 0) {
+        return NextResponse.json(
+          { success: false, error: "guestCount must be a positive integer" },
+          { status: 400, headers: SECURITY_HEADERS }
+        );
+      }
+      const guestCount = rawGuests;
+
+      const rawTier = String(payload.cityTier || "");
+      if (!VALID_TIERS.includes(rawTier as CityTier)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid cityTier. Must be Tier-1, Tier-2, or Tier-3" },
+          { status: 400, headers: SECURITY_HEADERS }
+        );
+      }
+      const cityTier = rawTier as CityTier;
+
+      const rawType = String(payload.eventType || "");
+      if (!VALID_TYPES.includes(rawType as EventType)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid eventType. Must be Wedding, Birthday, Community, or Corporate" },
+          { status: 400, headers: SECURITY_HEADERS }
+        );
+      }
+      const eventType = rawType as EventType;
 
       const stressTest = runBudgetStressTest(totalBudget, guestCount, cityTier, eventType);
-      return NextResponse.json({ success: true, stressTest });
+      return NextResponse.json({ success: true, stressTest }, { headers: SECURITY_HEADERS });
     }
 
     // 2. Real Gemini AI Chat Handling
@@ -108,14 +160,25 @@ export async function POST(req: Request) {
       ? String(messages[messages.length - 1]?.content || "")
       : "";
 
+    // Payload size protection against DoS
+    if (rawUserPrompt.length > 50000) {
+      return NextResponse.json(
+        { success: false, error: "Payload exceeds maximum allowed length of 50000 characters" },
+        { status: 413, headers: SECURITY_HEADERS }
+      );
+    }
+
     // Input sanitization and size limiting (prevents DoS)
     const userPrompt = rawUserPrompt.slice(0, 4000).trim();
 
     if (!userPrompt) {
-      return NextResponse.json({
-        success: true,
-        reply: "Please provide your event planning query or parameter adjustment.",
-      });
+      return NextResponse.json(
+        {
+          success: true,
+          reply: "Please provide your event planning query or parameter adjustment.",
+        },
+        { headers: SECURITY_HEADERS }
+      );
     }
 
     // Context summary for Gemini
@@ -189,9 +252,7 @@ ${userPrompt}`
         planUpdates: extractedUpdates,
       },
       {
-        headers: {
-          "X-Content-Type-Options": "nosniff",
-        },
+        headers: SECURITY_HEADERS,
       }
     );
   } catch (error: unknown) {
@@ -199,7 +260,7 @@ ${userPrompt}`
     console.error("Chat API route error:", errorMsg);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: SECURITY_HEADERS }
     );
   }
 }
