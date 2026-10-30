@@ -36,10 +36,22 @@ describe("Vendor Quote Deconstruction Engine", () => {
     );
 
     assert.strictEqual(analysis.category, "Decor");
-    assert.strictEqual(analysis.vendorA.quotedPrice, 1100);
-    assert.strictEqual(analysis.vendorB.quotedPrice, 1300);
+    assert.strictEqual(analysis.vendorA.quotedPrice, 150000);
+    assert.strictEqual(analysis.vendorB.quotedPrice, 175000);
 
     assert.ok(analysis.vendorA.hiddenOmissions.some((o) => o.includes("GST")));
     assert.ok(analysis.negotiationScript.length > 20);
+  });
+
+  it("falls back to benchmark prices when quotes contain no numeric amounts", () => {
+    const analysis = analyzeVendorQuotes(
+      "Decor",
+      "Custom floral design without rates",
+      "Comprehensive package on inquiry"
+    );
+
+    assert.strictEqual(analysis.category, "Decor");
+    assert.strictEqual(analysis.vendorA.quotedPrice, 1100);
+    assert.strictEqual(analysis.vendorB.quotedPrice, 1300);
   });
 });
